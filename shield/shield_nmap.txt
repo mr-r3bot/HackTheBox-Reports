@@ -1,0 +1,26 @@
+# Nmap 7.91 scan initiated Mon Mar  1 16:11:39 2021 as: nmap -sV -Pn -A -T4 -o shield_nmap.txt 10.10.10.29
+Nmap scan report for 10.10.10.29
+Host is up (0.44s latency).
+Not shown: 998 filtered ports
+PORT     STATE SERVICE    VERSION
+80/tcp   open  tcpwrapped
+| http-methods: 
+|_  Potentially risky methods: TRACE
+|_http-server-header: Microsoft-IIS/10.0
+|_http-title: IIS Windows Server
+3306/tcp open  tcpwrapped
+Warning: OSScan results may be unreliable because we could not find at least 1 open and 1 closed port
+Device type: VoIP adapter|general purpose
+Running (JUST GUESSING): Cisco embedded (97%), Linux 2.6.X (97%)
+OS CPE: cpe:/h:cisco:unified_call_manager cpe:/o:linux:linux_kernel:2.6.26
+Aggressive OS guesses: Cisco Unified Communications Manager VoIP adapter (97%), Linux 2.6.26 (PCLinuxOS) (97%)
+No exact OS matches for host (test conditions non-ideal).
+Network Distance: 11 hops
+
+TRACEROUTE (using port 3306/tcp)
+HOP RTT       ADDRESS
+1   ... 10
+11  493.87 ms 10.10.10.29
+
+OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Mon Mar  1 16:29:53 2021 -- 1 IP address (1 host up) scanned in 1093.89 seconds
