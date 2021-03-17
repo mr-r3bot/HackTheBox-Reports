@@ -54,3 +54,19 @@ With that private key, we can login to laboratory server `dexter@10.10.10.216` a
 
 
 # Post Exploitation
+Using `LinEnum.sh` for local enumeration -> check for any vulnerabilities that we can use for privilege escalation.
+
+After the script ran, we find one interesting executable file at `usr/local/bin/docker-security` 
+
+Inspect file permission show us that `docker-security` has a setuid (SUID) that allow us to execute it as `root` user
+
+See file content with `cat docker-security` and find out 2 interesting commands `chmod 700 /usr/bin/docker` and `chmod 660 /var/run/docker.sock`
+
+In the script file, they use `chmod`relative path, not absolute path => We can hijack this execution.
+
+- Create a folder at `/tmp/suid` 
+- Write a reverse shell script and name it `chmod` and enable permission for it to execute `chmod +x chmod`
+- Add current path to PATH environment: `export PATH=$(pwd):$PATH` 
+
+When `./docker-security` file is executed, it will find `chmod` command ( which is using relative path) and it will find our current path `/tmp/suid` that we added to `PATH` env. So it will execute our `chmod` reverse shell instead of the real chmod
+=> Listen for reverse shell in our machine and we have `root` user
