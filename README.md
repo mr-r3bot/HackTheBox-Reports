@@ -1,4 +1,4 @@
-# HackTheBox-Reports
+# HackTheBox Write-up
 
 Write summary reports of exploited machines on HackTheBox
 
