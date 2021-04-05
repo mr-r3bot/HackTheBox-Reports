@@ -3,7 +3,8 @@
 
 Some basic nmap scan let us know that this box has 2 opening ports, `22, 80`
 
-Visit the website, navigate around. But I see nothing interested
+Visit the website, navigate around. But I see nothing interested.
+
 Tried to run some directory enumeration with `gobuster` but there is nothing interesting either.
 
 So far, we got no information of what version of software is running on the website.
@@ -12,7 +13,9 @@ And then I found something interesting, in the response header, there is a heade
 
 `X-..: Drupal 7` 
 Now that is not a default header, it is a custom header. So I did some research and found out that Drupal is an CMS, and it has some known vulnerability with version < 7.58
+
 I'd recommend you do some research about the vulnerability and how does it work before using the script for exploiting.
+
 [Here](https://github.com/pimps/CVE-2018-7600/blob/master/drupa7-CVE-2018-7600.py) is the python script for that exploit
 
 # Exploitation
@@ -56,6 +59,20 @@ Copy the hash to our local machine and we can use `hashcat` to crack it
 
 
 User hash: $S$DgL2gjv6ZtxBo6CdqZEyJuBphBmrCqIV6W97.oOsUf1xAhaadURt
+
 user cred: `brucetherealadmin: b****o`
 
 # Post Exploitation
+
+Root part was pretty straight forward. By some low hanging fruit enumeration, we will be able to find this interesting stuff.
+
+```
+sudo -l
+
+(ALL) (NO PASSWD) sudo /usr/bin/snap install * 
+```
+SNAP is like a package manager.
+
+I did some research about snap and its vulnerabilities, I found that SNAP had some vulneribility relate to what is called "Dirty Sock" . But unfortunately, our current SNAP version in our machine is not vulnerable to that.
+
+So what should we do ?
