@@ -74,6 +74,8 @@ auth=<our_tokens
 
 And then we send our request to server. Watch our local machine logs, we did receive request from the box by modifying `kid` value => It is vulnerable 
 
+# Exploit
+
 Now it's time to take a step further. We will modify the `kid` value and point the URL to our private key and have the box fetch private key from our machine, verify the token
 
 ```
@@ -101,7 +103,7 @@ Click to view all notes, we can see that they have some notes:
 We can upload a php reverse shell file to get our reverse shell
 => We got RCE.
 
-# Exploit
+
 ======================================================
 cat /etc/passwd
 root:x:0:0:root:/root:/bin/bash
