@@ -104,20 +104,30 @@ We can upload a php reverse shell file to get our reverse shell
 => We got RCE.
 
 
-======================================================
+Enumerate users in machine
+```
 cat /etc/passwd
 root:x:0:0:root:/root:/bin/bash
 noah:x:1000:1000:Noah:/home/noah:/bin/bash
+```
 
-====================================================
+Based on the notes, we know there are some backup folders, doing some basic enumeration, we can found back up folders at `/var/backups` but it owned by `root`, we copy that back up folder to a directory owned by ours user so we can unzip them.
+
+```
 cp home.tar.gz /tmp
 tar -zxcf home.tar.gz 
 COPY id_rsa private key and login
-=> got user
+```
+=> got user, capture the `user.txt` flag
 
-====================================================
+# Post Exploitation
+
+Root part was pretty straight forward
+
+```
 sudo -l
 (ALL) NOPASSWD: /usr/bin/docker exec -it webapp-dev01*
+```
 
 ========================
 Exploit: https://programmersought.com/article/71085031667/
