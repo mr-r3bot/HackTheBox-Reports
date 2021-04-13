@@ -1,2 +1,39 @@
-# Nmap 7.91 scan initiated Tue Apr  6 16:00:04 2021 as: nmap -sV -sS -T4 -A -oN nmap.txt 10.129.110.182
-# Nmap done at Tue Apr  6 16:00:07 2021 -- 1 IP address (0 hosts up) scanned in 3.35 seconds
+# Nmap 7.91 scan initiated Sat Apr 10 21:21:22 2021 as: nmap -sV -sS -T4 -A -Pn -oN nmap.txt 10.10.10.234
+Nmap scan report for 10.10.10.234
+Host is up (0.040s latency).
+Not shown: 998 closed ports
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 7.9 (FreeBSD 20200214; protocol 2.0)
+| ssh-hostkey: 
+|   2048 1d:69:83:78:fc:91:f8:19:c8:75:a7:1e:76:45:05:dc (RSA)
+|   256 e9:b2:d2:23:9d:cf:0e:63:e0:6d:b9:b1:a6:86:93:38 (ECDSA)
+|_  256 7f:51:88:f7:3c:dd:77:5e:ba:25:4d:4c:09:25:ea:1f (ED25519)
+80/tcp open  http    Apache httpd 2.4.46 ((FreeBSD) PHP/7.4.15)
+| http-methods: 
+|_  Potentially risky methods: TRACE
+|_http-server-header: Apache/2.4.46 (FreeBSD) PHP/7.4.15
+|_http-title: Schooled - A new kind of educational institute
+No exact OS matches for host (If you know what OS is running on it, see https://nmap.org/submit/ ).
+TCP/IP fingerprint:
+OS:SCAN(V=7.91%E=4%D=4/10%OT=22%CT=1%CU=42623%PV=Y%DS=2%DC=T%G=Y%TM=6071B4A
+OS:C%P=x86_64-apple-darwin20.1.0)SEQ(SP=F6%GCD=1%ISR=108%TI=Z%CI=Z%TS=20)SE
+OS:Q(SP=105%GCD=1%ISR=10B%TI=Z%CI=Z%II=RI%TS=20)SEQ(TI=Z%CI=Z%II=RI%TS=20)O
+OS:PS(O1=M54DNW6ST11%O2=M54DNW6ST11%O3=M54DNW6NNT11%O4=M54DNW6ST11%O5=M54DN
+OS:W6ST11%O6=M54DST11)WIN(W1=FFFF%W2=FFFF%W3=FFFF%W4=FFFF%W5=FFFF%W6=FFFF)E
+OS:CN(R=Y%DF=Y%T=40%W=FFFF%O=M54DNW6SLL%CC=Y%Q=)T1(R=Y%DF=Y%T=40%S=O%A=S+%F
+OS:=AS%RD=0%Q=)T2(R=N)T3(R=Y%DF=Y%T=40%W=FFFF%S=O%A=S+%F=AS%O=M54DNW6ST11%R
+OS:D=0%Q=)T4(R=Y%DF=Y%T=40%W=0%S=A%A=Z%F=R%O=%RD=0%Q=)T5(R=Y%DF=Y%T=40%W=0%
+OS:S=Z%A=S+%F=AR%O=%RD=0%Q=)T6(R=Y%DF=Y%T=40%W=0%S=A%A=Z%F=R%O=%RD=0%Q=)T7(
+OS:R=Y%DF=Y%T=40%W=0%S=Z%A=S+%F=AR%O=%RD=0%Q=)U1(R=Y%DF=N%T=40%IPL=164%UN=0
+OS:%RIPL=G%RID=G%RIPCK=G%RUCK=G%RUD=G)IE(R=Y%DFI=S%T=40%CD=S)
+
+Network Distance: 2 hops
+Service Info: OS: FreeBSD; CPE: cpe:/o:freebsd:freebsd
+
+TRACEROUTE (using port 53/tcp)
+HOP RTT      ADDRESS
+1   37.35 ms 10.10.14.1
+2   37.76 ms 10.10.10.234
+
+OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Sat Apr 10 21:22:36 2021 -- 1 IP address (1 host up) scanned in 73.50 seconds
