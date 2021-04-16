@@ -129,9 +129,12 @@ sudo -l
 (ALL) NOPASSWD: /usr/bin/docker exec -it webapp-dev01*
 ```
 
-========================
+We follow the article below
+
 Exploit: https://programmersought.com/article/71085031667/
+
 Source code: https://github.com/Frichetten/CVE-2019-5736-PoC
 
-Install Docker image without internet:
-https://stackoverflow.com/questions/48125169/how-run-docker-images-without-connect-to-internet
+Clone the go source code and compile it into executable file, and then download the file from inside docker container which we have root priviledges and then execute
+
+After the script return succesfuly, we execute to the docker container with `/bin/sh` and then the root shell will pop back to us
